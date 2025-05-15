@@ -12,26 +12,26 @@ document.addEventListener("DOMContentLoaded", () => {
     const searchQuery = urlParams.get("search"); 
 
     // 페이지 로드 시작하자마자 무조건 videoGrid 숨기기
-    if (videoGrid) videoGrid.style.display = "none"; 
-    if (searchResult) searchResult.style.display = "none";
+    if (videoGrid) videoGrid.style.display = "none"; // 일단은 감추기 위함
+    if (searchResult) searchResult.style.display = "none"; // 검색 결과를 페이지 로드 시에는 보이지 않게 하기 위해서
 
     //영상 가져오기 함수
     async function fetchVideos() {
-        try {const res = await fetch("https://www.techfree-oreumi-api.ai.kr/video/getVideoList"); 
-            const data = await res.json(); 
+        try {const res = await fetch("https://www.techfree-oreumi-api.ai.kr/video/getVideoList");  // 오르미 API 주소에서 정보 가져오기
+            const data = await res.json(); // 가져온 정보 json 형식으로 저장
         
             // 영상 데이터 부르기
-            const videosWithChannel = await Promise.all( 
-                data.map(async (video) => {
-                    try {
+            const videosWithChannel = await Promise.all( // 다른 promise가 완료될때 까지 기다렸다가 실행
+                data.map(async (video) => { // 위에서 가져온 데이터의 요소에 하나씩 함수 적용. 요소 이름은 video로 임의지정
+                    try { // videolist에 채널 정보를 가져와 합치기 위함
                         const channelRes = await fetch(`https://www.techfree-oreumi-api.ai.kr/channel/getChannelInfo?id=${video.channel_id}`);
-                        const channelInfo = await channelRes.json();
-                        return { ...video, channel: channelInfo };
+                        const channelInfo = await channelRes.json(); // API에서 채널 id 정보를 가져오고 json 형식으로 변경
+                        return { ...video, channel: channelInfo }; // 
                     } catch (error) {
-                        console.error('채널 정보 오류:', error);
+                        console.error('채널 정보 오류:', error); // 에러발생시
                         return {
-                            ...video,
-                            channel: {
+                            ...video, //video는 그대로 출력
+                            channel: { // 채널 정보는 에러 상황을 반영함
                                 channel_name: 'Unknown',
                                 channel_profile: '/assets/profiles/default-profile.svg'
                             }
@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 })
             );
         
-            return videosWithChannel;
+            return videosWithChannel; // 채널정보까지 모두 불러오고 나면 합쳐진 정보를 변수에 저장
         } catch (error) {
             console.error("영상 목록 불러오기 실패:", error);
             return [];
@@ -50,14 +50,14 @@ document.addEventListener("DOMContentLoaded", () => {
     
 
     //영상 리스트 불러오기 함수 생성
-    function renderVideos(videos) {
-        videoGrid.style.display = "none";       
-        searchResult.style.display = "block";    
-        searchResult.innerHTML = "";            
+    function renderVideos(videos) { 
+        videoGrid.style.display = "none"; // 비디오 그리드를 보이지 않게 처리. 검색결과를 넣기 위해      
+        searchResult.style.display = "block"; // 검색 결과를 보이도록 처리
+        searchResult.innerHTML = "";  //검색 결과 내용 생성          
     
         videos.forEach(video => {
-            const div = document.createElement("article");
-            div.className = "video-card"; 
+            const div = document.createElement("article"); // 새로운 요소 생성. 검색결과를 출력하기 위해서. 태그 이름 article
+            div.className = "video-card"; // 새로우 요소에 이름 지정
             div.innerHTML = `
                 <article class="search-item">
                     <a href="/video?id=${video.id}">
@@ -91,48 +91,48 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-            searchResult.appendChild(div);
+            searchResult.appendChild(div); // 검색결과를 html에 추가
         });
-        enableThumbnailPreview();
+        enableThumbnailPreview(); // 썸네일 비디오 재생기능 
     }
-    function formatViews(views) {
-        if (views >= 1_000_000) return (views / 1_000_000).toFixed(1) + "M";
-        if (views >= 1_000) return (views / 1_000).toFixed(1) + "K";
-        return views.toString();
+    function formatViews(views) { // 시청횟수 출력 함수
+        if (views >= 1_000_000) return (views / 1_000_000).toFixed(1) + "M"; //  백만 단위로 끈어서 M을 붙여서 출력함. 예) 3.4M
+        if (views >= 1_000) return (views / 1_000).toFixed(1) + "K"; // 천 단위로 K를 붙여서 출력함. 예) 2.3k
+        return views.toString(); // 천 미만이면 그냥 문자열로 출력
     }
-    function getRelativeTime(dateString) {
-        const uploadDate = new Date(dateString);
-        const now = new Date();
-        const diffMs = now - uploadDate;
+    function getRelativeTime(dateString) { // 업로드 날짜 출력
+        const uploadDate = new Date(dateString); // 입력된 날짜를 저장
+        const now = new Date(); // 현재 시간을 저장
+        const diffMs = now - uploadDate; // 입력된 날짜와 현재 시간의 차이를 저장
     
-        const seconds = Math.floor(diffMs / 1000);
-        const minutes = Math.floor(seconds / 60);
-        const hours   = Math.floor(minutes / 60);
-        const days    = Math.floor(hours / 24);
-        const weeks   = Math.floor(days / 7);
-        const months  = Math.floor(days / 30);
-        const years   = Math.floor(days / 365);
+        const seconds = Math.floor(diffMs / 1000); // 밀리초를 초단위로 변환하여 저장. 소수점은 버림
+        const minutes = Math.floor(seconds / 60); // 분단위로 변환
+        const hours   = Math.floor(minutes / 60); // 시간 단위로 변환
+        const days    = Math.floor(hours / 24); // 일 단위로 변환
+        const weeks   = Math.floor(days / 7); // 주 단위로 변환
+        const months  = Math.floor(days / 30); // 월 단위로 변환
+        const years   = Math.floor(days / 365); // 년단위로 변환
     
-        if (years > 0) return `${years} year${years > 1 ? 's' : ''} ago`;
-        if (months > 0) return `${months} month${months > 1 ? 's' : ''} ago`;
+        if (years > 0) return `${years} year${years > 1 ? 's' : ''} ago`; // 연 단위가 있으면, ago를 붙임. 만약 2이상이면 s도 붙임
+        if (months > 0) return `${months} month${months > 1 ? 's' : ''} ago`; 
         if (weeks > 0) return `${weeks} week${weeks > 1 ? 's' : ''} ago`;
         if (days > 0) return `${days} day${days > 1 ? 's' : ''} ago`;
         if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
         if (minutes > 0) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
-        return `just now`;
+        return `just now`; // 현재시간과 입력된 날짜가 같으면 출력
     }
-    function enableThumbnailPreview() {
-        document.querySelectorAll('.video-thumbnail').forEach(thumb => {
-            const video = thumb.querySelector('.preview');
-            if (!video) return;
+    function enableThumbnailPreview() { // 썸네일 비디오 재생기능
+        document.querySelectorAll('.video-thumbnail').forEach(thumb => { 
+            const video = thumb.querySelector('.preview'); // 비디오 썸네일 중 프리뷰 부분
+            if (!video) return; 
 
-            thumb.addEventListener('mouseenter', () => {
+            thumb.addEventListener('mouseenter', () => { // 마우스를 올리면 비디오 재생
                 video.play();
             });
 
-            thumb.addEventListener('mouseleave', () => {
+            thumb.addEventListener('mouseleave', () => { // 마우스를 치우면 비디오 정지.
                 video.pause();
-                video.currentTime = 0;
+                video.currentTime = 0; // 비디오 재생시간을 초기화
             });
         });
     }
@@ -143,9 +143,9 @@ document.addEventListener("DOMContentLoaded", () => {
         try {const allVideos = await fetchVideos(); // API에서 정보가져오기
 
             // 검색어 없으면 홈 화면 복구
-            if (!keyword || keyword.trim() === "") {
-                videoGrid.style.display = "grid";
-                searchResult.style.display = "none";
+            if (!keyword || keyword.trim() === "") { 
+                videoGrid.style.display = "grid"; // 원래의 상태로 되돌림
+                searchResult.style.display = "none"; 
                 return;
             }
     

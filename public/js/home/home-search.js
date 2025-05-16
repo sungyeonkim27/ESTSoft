@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const searchBtn = document.querySelector(".search-form button"); 
     const videoGrid = document.querySelector(".video-grid"); 
     const searchResult = document.querySelector(".search-result"); 
-    const categoryBtns = document.querySelectorAll(".category-btn");  
+    const categoryBtns = document.querySelectorAll(".category-btn");   // 핌터바 버튼
     // 현재 페이지 url의 쿼리스트링 가져오기
     const urlParams = new URLSearchParams(window.location.search); 
     const searchQuery = urlParams.get("search"); 
@@ -140,7 +140,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
     //검색 기능 함수 생성
     async function handleSearch(keyword) {
-        try {const allVideos = await fetchVideos(); // API에서 정보가져오기
+        try {const allVideos = await fetchVideos(); //함수 호출. API에서 정보 불러옴
 
             // 검색어 없으면 홈 화면 복구
             if (!keyword || keyword.trim() === "") { 
@@ -149,17 +149,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
     
-            const lowerKeyword = keyword.toLowerCase();
-            const filtered = allVideos.filter(video =>
-                video.title.toLowerCase().includes(lowerKeyword) ||
-                video.tags.join(",").toLowerCase().includes(lowerKeyword) ||
-                video.channel.channel_name.toLowerCase().includes(lowerKeyword)
+            const lowerKeyword = keyword.toLowerCase(); //대소문자 구분 없게 모두 소문자로 변환
+            const filtered = allVideos.filter(video => 
+                video.title.toLowerCase().includes(lowerKeyword) || // 제목에 키워드를 포함하고 있는 경우
+                video.tags.join(",").toLowerCase().includes(lowerKeyword) || // 태그에 키워드를 포함하고 있는 경우. 쉼표로 이어붙인 문자열에서 확인 
+                video.channel.channel_name.toLowerCase().includes(lowerKeyword) // 채널 이름에 키워드를 포함하고 있는 경우
             );
     
-            if (filtered.length === 0) {
+            if (filtered.length === 0) { // 검색 결과가 없는 경우
                 alert("검색 결과가 없습니다.");
             } else {
-                renderVideos(filtered);
+                renderVideos(filtered); // 검색 결과가 있는 경우, 렌더링
             }
         } catch (error) {
             console.error("검색 처리 중 오류:", error);
@@ -168,10 +168,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
     //버튼 기능 실행
-    searchBtn.addEventListener("click", (e) => {
+    searchBtn.addEventListener("click", (e) => { 
         e.preventDefault();
-        const keyword = searchInput.value;
-        if (keyword === "") {
+        const keyword = searchInput.value; 
+        if (keyword === "") { // 검색어 비어있으면 실행. ===""라고 해야 검색창에 아무것도 안적어도 싷행됨
             window.location.href = "/";
             return;
         }

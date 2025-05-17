@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const searchInput = document.querySelector(".search-form input[type='search']");
     const searchBtn = document.querySelector(".search-form button");
 
-    if (!searchInput || !searchBtn) {
+    if (!searchInput || !searchBtn) { 
       console.warn("검색 입력창 또는 버튼이 존재하지 않습니다.");
       return;
     }
@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
     searchBtn.addEventListener("click", (e) => {
       try {
         e.preventDefault();
-        const keyword = searchInput.value.trim();
+        const keyword = searchInput.value.trim(); 
         if (keyword) {
           window.location.href = `/?search=${encodeURIComponent(keyword)}`;
         } else {
@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
           e.preventDefault();
           const keyword = searchInput.value.trim();
           if (keyword) {
-            window.location.href = `/?search=${encodeURIComponent(keyword)}`;
+            window.location.href = `/?search=${encodeURIComponent(keyword)}`; // 키워드를 안전하게 변환하여 사용
           } else {
             alert("검색어를 입력해주세요.");
           }

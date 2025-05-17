@@ -3,16 +3,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('searchInput');
     const searchForm = searchInput.closest('form'); // form 태그 가져오기
 
-    searchIcon.addEventListener('click', () => {
-        searchInput.classList.toggle('active');
+    searchIcon.addEventListener('click', () => { // 검색 아이콘을 클릭 시 
+        searchInput.classList.toggle('active'); // 검색창을 보이거나, 안보이게 하기위해서
         if (searchInput.classList.contains('active')) {
-            searchInput.focus();
+            searchInput.focus(); // 자동으로 검색창에 커서를 이동시킴
         } else {
             searchInput.value = '';
         }
     });
 
-    searchForm.addEventListener('submit', (e) => {
+    searchForm.addEventListener('submit', (e) => { // 제출 시
         const query = searchInput.value.trim();
         if (query === '') {
             e.preventDefault(); // form 제출 막기

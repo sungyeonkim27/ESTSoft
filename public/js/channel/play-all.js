@@ -10,7 +10,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const playlistName = button.dataset.playlistName;
 
             if (firstVideoId && channelId) {
-                const url = `/video?id=${firstVideoId}&queue=mix&channelId=${channelId}&playlist=${encodeURIComponent(playlistName)}`;
+                const url = `/video?
+                id=${firstVideoId}
+                &queue=mix
+                &channelId=${channelId}
+                &playlist=${encodeURIComponent(playlistName)}`;
                 window.location.href = url;
             } else {
                 console.warn('데이터 누락:', { firstVideoId, channelId });
